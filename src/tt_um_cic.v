@@ -4,7 +4,7 @@
  */
 
 
-module cic #(
+module tt_um_cic #(
 	parameter integer out_width = 20,
 	parameter integer in_width = 20,
 	parameter integer decimation_ratio = 8,

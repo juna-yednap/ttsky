@@ -7,9 +7,9 @@
 module tt_um_cic #(
 	parameter integer out_width = 11,
 	parameter integer in_width = 11,
-	parameter integer decimation_ratio = 4,
-	parameter integer order = 3,
-	parameter integer differential_delay = 2
+	parameter integer decimation_ratio = 8,
+	parameter integer order = 6,
+	parameter integer differential_delay = 1
 ) (
 	input  wire [7:0] ui_in,    // Dedicated inputs
     output wire [7:0] uo_out,   // Dedicated outputs
@@ -107,9 +107,7 @@ generate
 		assign comb[r] = comb[r-1] - d_comb[r][differential_delay-1];
 	end
 endgenerate
-/* verilator lint_off WIDTHTRUNC */
 assign d_out =
     ( comb[order-1] + (1 << (in_width+GAIN_BITS-out_width-1)) )
     >>> (in_width+GAIN_BITS-out_width);
-/* verilator lint_on WIDTHTRUNC */
 endmodule

@@ -20,6 +20,7 @@ module tt_um_cic #(
     input  wire       clk,
     input  wire       rst_n
 );
+
 wire [10:0] d_in;
 wire valid_out;
 assign d_in = {ui_in, uio_in[2], uio_in[3], uio_in[4]};
@@ -31,8 +32,13 @@ assign uio_out[7] = d_out[10];
 wire valid_in;
 assign valid_in = uio_in[0];
 assign uio_out[1] = valid_out;
+assign uio_out[0] = 1'b0;
+assign uio_out[2] = 1'b0;
+assign uio_out[3] = 1'b0;
+assign uio_out[4] = 1'b0;
 assign uio_oe = {8'b11100010};
-wire _unused_ok = &ena;
+wire _unused = &{ena, 1'b0};
+
 	
 localparam integer COUNTW = $clog2(decimation_ratio);
 localparam integer GAIN_BITS = order * $clog2(decimation_ratio * differential_delay);

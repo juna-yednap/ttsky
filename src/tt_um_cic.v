@@ -5,8 +5,8 @@
 
 
 module tt_um_cic #(
-	parameter integer out_width = 12,
-	parameter integer in_width = 10,
+	parameter integer out_width = 7,
+	parameter integer in_width = 7,
 	parameter integer decimation_ratio = 8,
 	parameter integer order = 6,
 	parameter integer differential_delay = 4
@@ -14,8 +14,8 @@ module tt_um_cic #(
 	input  wire                      clk,
 	input  wire                      rst,
 	input  signed [in_width-1:0]     d_in,
-	input  wire                       ce_1,
-	input  wire                       ce_2,
+	input  wire                      valid_in,
+	output wire                      valid_out,
 	output wire  signed [out_width-1:0]   d_out
 );
 
@@ -24,6 +24,14 @@ localparam integer GAIN_BITS = order * $clog2(decimation_ratio * differential_de
 reg signed [in_width+GAIN_BITS-1:0] d_tmp;
 reg signed [in_width+GAIN_BITS-1:0] integrator [0:order-1];
 
+reg [COUNTW-1 : 0] counter;
+always@(negedge clk or posedge rst) begin
+    if(rst) counter <= {COUNTW{1'b1}};
+    else if(valid_in) begin
+        counter<=counter+1;
+    end
+end
+assign valid_out = ((counter == 1'b0));
 wire signed [in_width+GAIN_BITS-1:0] comb [0:order-1];
 reg signed [in_width+GAIN_BITS-1:0] d_comb [0:order-1][0:differential_delay-1];
 reg d_clk_tmp;
@@ -36,18 +44,18 @@ always @(posedge clk or posedge rst) begin
 			integrator[i] <= {(in_width+GAIN_BITS-1){1'b0}};
 		end
 		d_tmp <= {(in_width+GAIN_BITS-1){1'b0}};
-	end else if(ce_1) begin
+	end else if(valid_in) begin
 		integrator[0] <= integrator[0] + $signed(d_in);
 		for(i = 1; i <= order-1; i = i + 1) begin
 			integrator[i] <= integrator[i] + integrator[i-1];
 		end
-		// Decimation control: when cce_2 enabled capture output
-		if (ce_2) begin
+		// Decimation control: when valid_out enabled capture output
+		if (valid_out ) begin
 			d_tmp <= integrator[order-1];
 		end
 	end
 end
-// Comb section (processes one decimated sample when ce_2 is asserted)
+// Comb section (processes one decimated sample when valid_out is asserted)
 always @(posedge clk or posedge rst) begin
 	if (rst) begin
 	    for (i = 0; i <= order-1; i = i + 1) begin
@@ -56,7 +64,7 @@ always @(posedge clk or posedge rst) begin
 	            end
 	        end
 	    end else begin
-	        if (ce_2) begin
+	        if (valid_out)  begin
 	            for (j = differential_delay-1; j > 0; j = j - 1) begin
 	                d_comb[0][j] <= d_comb[0][j-1];
 	            end

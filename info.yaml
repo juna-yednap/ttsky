@@ -23,34 +23,34 @@ project:
 # This section is for the datasheet/website. Use descriptive names (e.g., RX, TX, MOSI, SCL, SEG_A, etc.).
 pinout:
   # Inputs
-  ui[0]: "clk"
-  ui[1]: "rst_n"
-  ui[2]: "valid_in"
-  ui[3]: "d_in[0]"
-  ui[4]: "d_in[1]"
-  ui[5]: "d_in[2]"
-  ui[6]: "d_in[3]"
-  ui[7]: "ena"
+  ui[0]: "din0"
+  ui[1]: "din1"
+  ui[2]: "din2"
+  ui[3]: "din3"
+  ui[4]: "din4"
+  ui[5]: "din5"
+  ui[6]: "din6"
+  ui[7]: "din7"
 
   # Outputs
-  uo[0]: "valid_out"
-  uo[1]: "d_out[0]"
-  uo[2]: "d_out[1]"
-  uo[3]: "d_out[2]"
-  uo[4]: "d_out[3]"
-  uo[5]: "d_out[4]"
-  uo[6]: "d_out[5]"
-  uo[7]: "d_out[6]"
+  uo[0]: "dout0"
+  uo[1]: "dout1"
+  uo[2]: "dout2"
+  uo[3]: "dout3"
+  uo[4]: "dout4"
+  uo[5]: "dout5"
+  uo[6]: "dout6"
+  uo[7]: "dout7"
 
   # Bidirectional pins
-  uio[0]: ""
-  uio[1]: ""
-  uio[2]: ""
-  uio[3]: ""
-  uio[4]: ""
-  uio[5]: ""
-  uio[6]: ""
-  uio[7]: ""
+  uio[0]: "valid_in"
+  uio[1]: "valid_out"
+  uio[2]: "din8"
+  uio[3]: "din9"
+  uio[4]: "din10"
+  uio[5]: "dout8"
+  uio[6]: "dout9"
+  uio[7]: "dout10"
 
 # Do not change!
 yaml_version: 6

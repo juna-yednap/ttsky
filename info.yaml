@@ -24,7 +24,7 @@ project:
 pinout:
   # Inputs
   ui[0]: "clk"
-  ui[1]: "rst"
+  ui[1]: "rst_n"
   ui[2]: "valid_in"
   ui[3]: "d_in[0]"
   ui[4]: "d_in[1]"

@@ -93,7 +93,7 @@ integer j1;
 	            end
 	            d_comb[0][0] <= d_tmp;
 					
-				for (i1 = 1; i1 <= order-1; i = i1 + 1) begin
+				for (i1 = 1; i1 <= order-1; i1 = i1 + 1) begin
 					for (j1 = differential_delay-1; j1 > 0; j1 = j1 - 1) begin
 						d_comb[i1][j1] <= d_comb[i1][j1-1];
 	                end

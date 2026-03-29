@@ -13,7 +13,7 @@ module tt_um_cic #(
 ) (
 	input  wire						 ena,
 	input  wire                      clk,
-	input  wire                      rst,
+	input  wire                      rst_n,
 	input  signed [in_width-1:0]     d_in,
 	input  wire                      valid_in,
 	output wire                      valid_out,

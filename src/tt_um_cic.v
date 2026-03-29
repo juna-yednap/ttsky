@@ -66,7 +66,7 @@ integer j;
 		end
 		d_tmp <= {(in_width+GAIN_BITS-1){1'b0}};
 	end else if(valid_in) begin
-		integrator[0] <= integrator[0] + $signed(d_in);
+		integrator[0] <= integrator[0] + {{GAIN_BITS{d_in[in_width-1]}}, d_in};
 		for(i = 1; i <= order-1; i = i + 1) begin
 			integrator[i] <= integrator[i] + integrator[i-1];
 		end
@@ -107,7 +107,9 @@ generate
 		assign comb[r] = comb[r-1] - d_comb[r][differential_delay-1];
 	end
 endgenerate
+/* verilator lint_off WIDTHTRUNC */
 assign d_out =
     ( comb[order-1] + (1 << (in_width+GAIN_BITS-out_width-1)) )
     >>> (in_width+GAIN_BITS-out_width);
+/* verilator lint_on WIDTHTRUNC */
 endmodule

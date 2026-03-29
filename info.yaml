@@ -2,7 +2,7 @@
 project:
   title:        "cic"      # Project title
   author:       "anuj"      # Your name
-  discord:      "katsuri_metho"      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
+  discord:      "katsuri_methi"      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
   description:  "cic decimation filter"      # One line description of what your project does
   language:     "Verilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
   clock_hz:     0       # Clock frequency in Hz (or 0 if not applicable)
@@ -25,22 +25,22 @@ pinout:
   # Inputs
   ui[0]: "clk"
   ui[1]: "rst"
-  ui[2]: "d_in"
-  ui[3]: "ce_1"
-  ui[4]: "ce_2"
-  ui[5]: ""
-  ui[6]: ""
-  ui[7]: ""
+  ui[2]: "valid_in"
+  ui[3]: "d_in[0]"
+  ui[4]: "d_in[1]"
+  ui[5]: "d_in[2]"
+  ui[6]: "d_in[3]"
+  ui[7]: "d_in[4]"
 
   # Outputs
-  uo[0]: "d_out"
-  uo[1]: ""
-  uo[2]: ""
-  uo[3]: ""
-  uo[4]: ""
-  uo[5]: ""
-  uo[6]: ""
-  uo[7]: ""
+  uo[0]: "valid_out"
+  uo[1]: "d_out[0]"
+  uo[2]: "d_out[1]"
+  uo[3]: "d_out[2]"
+  uo[4]: "d_out[3]"
+  uo[5]: "d_out[4]"
+  uo[6]: "d_out[5]"
+  uo[7]: "d_out[6]"
 
   # Bidirectional pins
   uio[0]: ""

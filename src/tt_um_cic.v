@@ -20,12 +20,18 @@ module tt_um_cic #(
     input  wire       clk,
     input  wire       rst_n
 );
-assign wire d_in = {ui_in, uio_in[2], uio_in[3], uio_in[4]};
-wire d_out;
-{uo_out, uio_out[5], uio_out[6], uio_out[7]} = d_out;
-assign wire valid_in = uio_in[0];
-uio_out[1] = valid_out;
-uio_oe = {8'b01000111};
+wire [10:0] d_in;
+wire valid_out;
+assign d_in = {ui_in, uio_in[2], uio_in[3], uio_in[4]};
+wire [10:0] d_out;
+assign uo_out     = d_out[7:0];
+assign uio_out[5] = d_out[8];
+assign uio_out[6] = d_out[9];
+assign uio_out[7] = d_out[10];
+wire valid_in;
+assign valid_in = uio_in[0];
+assign uio_out[1] = valid_out;
+assign uio_oe = {8'b11100010};
 wire _unused_ok = &ena;
 	
 localparam integer COUNTW = $clog2(decimation_ratio);
@@ -34,8 +40,8 @@ reg signed [in_width+GAIN_BITS-1:0] d_tmp;
 reg signed [in_width+GAIN_BITS-1:0] integrator [0:order-1];
 
 reg [COUNTW-1 : 0] counter;
-	always@(posedge clk or posedge rst_n) begin
-		if(rst_n) counter <= {COUNTW{1'b1}};
+	always@(posedge clk or negedge rst_n) begin
+		if(!rst_n) counter <= {COUNTW{1'b1}};
     else if(valid_in) begin
         counter<=counter+1;
     end
@@ -48,7 +54,7 @@ integer i;
 integer j;
 // Integrator + decimation control
 	always @(posedge clk or posedge rst_n) begin
-	if (rst) begin
+		if (!rst_n) begin
 		for (i = 0; i <= order-1; i = i + 1) begin
 			integrator[i] <= {(in_width+GAIN_BITS-1){1'b0}};
 		end
@@ -65,8 +71,8 @@ integer j;
 	end
 end
 // Comb section (processes one decimated sample when valid_out is asserted)
-	always @(posedge clk or posedge rst_n) begin
-	if (rst) begin
+	always @(posedge clk or negedge rst_n) begin
+		if (!rst_n) begin
 	    for (i = 0; i <= order-1; i = i + 1) begin
 	        for (j = 0; j < differential_delay; j = j + 1) begin
 	                d_comb[i][j] <= {(in_width+GAIN_BITS-1){1'b0}};

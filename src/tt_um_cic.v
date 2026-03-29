@@ -5,8 +5,8 @@
 
 
 module tt_um_cic #(
-	parameter integer out_width = 20,
-	parameter integer in_width = 20,
+	parameter integer out_width = 12,
+	parameter integer in_width = 10,
 	parameter integer decimation_ratio = 8,
 	parameter integer order = 6,
 	parameter integer differential_delay = 4

@@ -23,7 +23,7 @@ module tt_um_cic #(
 
 wire [10:0] d_in;
 wire valid_out;
-assign d_in = {ui_in, uio_in[2], uio_in[3], uio_in[4]};
+assign d_in = {uio_in[4], uio_in[3], uio_in[2], ui_in};
 wire [10:0] d_out;
 assign uo_out     = d_out[7:0];
 assign uio_out[5] = d_out[8];
@@ -36,7 +36,7 @@ assign uio_out[0] = 1'b0;
 assign uio_out[2] = 1'b0;
 assign uio_out[3] = 1'b0;
 assign uio_out[4] = 1'b0;
-assign uio_oe = {8'b11100010};
+assign uio_oe = 8'b11100010;
 wire _unused = &{ena, 1'b0};
 
 	
@@ -76,26 +76,28 @@ integer j;
 		end
 	end
 end
+integer i1;
+integer j1;
 // Comb section (processes one decimated sample when valid_out is asserted)
 	always @(posedge clk or negedge rst_n) begin
 		if (!rst_n) begin
-	    for (i = 0; i <= order-1; i = i + 1) begin
-	        for (j = 0; j < differential_delay; j = j + 1) begin
-	                d_comb[i][j] <= {(in_width+GAIN_BITS){1'b0}};
+			for (i1 = 0; i1 <= order-1; i1 = i1 + 1) begin
+				for (j1 = 0; j1 < differential_delay; j1 = j1 + 1) begin
+					d_comb[i1][j1] <= {(in_width+GAIN_BITS){1'b0}};
 	            end
 	        end
 	    end else begin
 	        if (valid_out)  begin
-	            for (j = differential_delay-1; j > 0; j = j - 1) begin
-	                d_comb[0][j] <= d_comb[0][j-1];
+				for (j1 = differential_delay-1; j1 > 0; j1 = j1 - 1) begin
+					d_comb[0][j] <= d_comb[0][j1-1];
 	            end
 	            d_comb[0][0] <= d_tmp;
 					
-	            for (i = 1; i <= order-1; i = i + 1) begin
-	               for (j = differential_delay-1; j > 0; j = j - 1) begin
-	                    d_comb[i][j] <= d_comb[i][j-1];
+				for (i1 = 1; i1 <= order-1; i = i1 + 1) begin
+					for (j1 = differential_delay-1; j1 > 0; j1 = j1 - 1) begin
+						d_comb[i1][j1] <= d_comb[i1][j1-1];
 	                end
-	                d_comb[i][0] <= comb[i-1];
+					d_comb[i1][0] <= comb[i1-1];
 	            end
 	        end
 	    end

@@ -46,7 +46,7 @@ reg signed [in_width+GAIN_BITS-1:0] d_tmp;
 reg signed [in_width+GAIN_BITS-1:0] integrator [0:order-1];
 
 reg [COUNTW-1 : 0] counter;
-	always@(posedge clk or negedge rst_n) begin
+	always@(posedge clk or posedge rst_n) begin
 		if(!rst_n) counter <= {COUNTW{1'b1}};
     else if(valid_in) begin
         counter<=counter+1;
@@ -62,9 +62,9 @@ integer j;
 	always @(posedge clk or posedge rst_n) begin
 		if (!rst_n) begin
 		for (i = 0; i <= order-1; i = i + 1) begin
-			integrator[i] <= {(in_width+GAIN_BITS-1){1'b0}};
+			integrator[i] <= {(in_width+GAIN_BITS){1'b0}};
 		end
-		d_tmp <= {(in_width+GAIN_BITS-1){1'b0}};
+		d_tmp <= {(in_width+GAIN_BITS){1'b0}};
 	end else if(valid_in) begin
 		integrator[0] <= integrator[0] + {{GAIN_BITS{d_in[in_width-1]}}, d_in};
 		for(i = 1; i <= order-1; i = i + 1) begin
@@ -77,11 +77,11 @@ integer j;
 	end
 end
 // Comb section (processes one decimated sample when valid_out is asserted)
-	always @(posedge clk or negedge rst_n) begin
+	always @(posedge clk or posedge rst_n) begin
 		if (!rst_n) begin
 	    for (i = 0; i <= order-1; i = i + 1) begin
 	        for (j = 0; j < differential_delay; j = j + 1) begin
-	                d_comb[i][j] <= {(in_width+GAIN_BITS-1){1'b0}};
+	                d_comb[i][j] <= {(in_width+GAIN_BITS){1'b0}};
 	            end
 	        end
 	    end else begin

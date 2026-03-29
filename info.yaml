@@ -30,7 +30,7 @@ pinout:
   ui[4]: "d_in[1]"
   ui[5]: "d_in[2]"
   ui[6]: "d_in[3]"
-  ui[7]: "d_in[4]"
+  ui[7]: "ena"
 
   # Outputs
   uo[0]: "valid_out"

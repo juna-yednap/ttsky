@@ -6,7 +6,7 @@
 
 module tt_um_cic #(
 	parameter integer out_width = 7,
-	parameter integer in_width = 7,
+	parameter integer in_width = 5,
 	parameter integer decimation_ratio = 8,
 	parameter integer order = 6,
 	parameter integer differential_delay = 4

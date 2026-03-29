@@ -8,7 +8,7 @@ module tt_um_cic #(
 	parameter integer out_width = 11,
 	parameter integer in_width = 11,
 	parameter integer decimation_ratio = 4,
-	parameter integer order = 5,
+	parameter integer order = 4,
 	parameter integer differential_delay = 1
 ) (
 	input  wire [7:0] ui_in,    // Dedicated inputs

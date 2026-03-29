@@ -5,29 +5,37 @@
 
 
 module tt_um_cic #(
-	parameter integer out_width = 7,
-	parameter integer in_width = 4,
+	parameter integer out_width = 11,
+	parameter integer in_width = 11,
 	parameter integer decimation_ratio = 8,
 	parameter integer order = 6,
 	parameter integer differential_delay = 4
 ) (
-	input  wire						 ena,
-	input  wire                      clk,
-	input  wire                      rst_n,
-	input  signed [in_width-1:0]     d_in,
-	input  wire                      valid_in,
-	output wire                      valid_out,
-	output wire  signed [out_width-1:0]   d_out
+	input  wire [7:0] ui_in,    // Dedicated inputs
+    output wire [7:0] uo_out,   // Dedicated outputs
+    input  wire [7:0] uio_in,   // IOs: Input path
+    output wire [7:0] uio_out,  // IOs: Output path
+	output wire [7:0] uio_oe,   // IOs: Enable path (active high: 0=input, 1=output)
+    input  wire       ena,
+    input  wire       clk,
+    input  wire       rst_n
 );
-
+assign wire d_in = {ui_in, uio_in[2], uio_in[3], uio_in[4]};
+wire d_out;
+{uo_out, uio_out[5], uio_out[6], uio_out[7]} = d_out;
+assign wire valid_in = uio_in[0];
+uio_out[1] = valid_out;
+uio_oe = {8'b01000111};
+wire _unused_ok = &ena;
+	
 localparam integer COUNTW = $clog2(decimation_ratio);
 localparam integer GAIN_BITS = order * $clog2(decimation_ratio * differential_delay);
 reg signed [in_width+GAIN_BITS-1:0] d_tmp;
 reg signed [in_width+GAIN_BITS-1:0] integrator [0:order-1];
 
 reg [COUNTW-1 : 0] counter;
-always@(negedge clk or posedge rst) begin
-    if(rst) counter <= {COUNTW{1'b1}};
+	always@(posedge clk or posedge rst_n) begin
+		if(rst_n) counter <= {COUNTW{1'b1}};
     else if(valid_in) begin
         counter<=counter+1;
     end
@@ -39,7 +47,7 @@ reg d_clk_tmp;
 integer i;
 integer j;
 // Integrator + decimation control
-always @(posedge clk or posedge rst) begin
+	always @(posedge clk or posedge rst_n) begin
 	if (rst) begin
 		for (i = 0; i <= order-1; i = i + 1) begin
 			integrator[i] <= {(in_width+GAIN_BITS-1){1'b0}};
@@ -57,7 +65,7 @@ always @(posedge clk or posedge rst) begin
 	end
 end
 // Comb section (processes one decimated sample when valid_out is asserted)
-always @(posedge clk or posedge rst) begin
+	always @(posedge clk or posedge rst_n) begin
 	if (rst) begin
 	    for (i = 0; i <= order-1; i = i + 1) begin
 	        for (j = 0; j < differential_delay; j = j + 1) begin

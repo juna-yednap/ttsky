@@ -57,7 +57,6 @@ wire signed [in_width+GAIN_BITS-1:0] comb [0:order-1];
 reg signed [in_width+GAIN_BITS-1:0] d_comb [0:order-1][0:differential_delay-1];
 reg d_clk_tmp;
 integer i;
-integer j;
 // Integrator + decimation control
 	always @(posedge clk or negedge rst_n) begin
 		if (!rst_n) begin
@@ -89,7 +88,7 @@ integer j1;
 	    end else begin
 	        if (valid_out)  begin
 				for (j1 = differential_delay-1; j1 > 0; j1 = j1 - 1) begin
-					d_comb[0][j] <= d_comb[0][j1-1];
+					d_comb[0][j1] <= d_comb[0][j1-1];
 	            end
 	            d_comb[0][0] <= d_tmp;
 					

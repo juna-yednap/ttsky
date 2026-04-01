@@ -101,10 +101,6 @@ integer j1;
 	    end
 end
 
-// CHANGED: Replaced the standalone "assign comb[0] = ..." and the generate/for
-//          block with a single always @(*) combinational block.
-//          Verilator can trace dataflow linearly through an integer loop index,
-//          so it no longer sees the array as self-referential. Logic is unchanged.
 integer i2;
 always @(*) begin
     comb[0] = d_tmp - d_comb[0][differential_delay-1];

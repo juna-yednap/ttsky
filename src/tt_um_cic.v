@@ -2,8 +2,6 @@
  * Copyright (c) 2024 Your Name
  * SPDX-License-Identifier: Apache-2.0
  */
-
-
 module tt_um_cic #(
 	parameter integer out_width = 11,
 	parameter integer in_width = 11,
@@ -20,7 +18,6 @@ module tt_um_cic #(
     input  wire       clk,
     input  wire       rst_n
 );
-
 wire [10:0] d_in;
 wire valid_out;
 assign d_in = {uio_in[4], uio_in[3], uio_in[2], ui_in};
@@ -38,13 +35,11 @@ assign uio_out[3] = 1'b0;
 assign uio_out[4] = 1'b0;
 assign uio_oe = 8'b11100010;
 wire _unused = &{ena, 1'b0};
-
 	
 localparam integer COUNTW = $clog2(decimation_ratio);
 localparam integer GAIN_BITS = order * $clog2(decimation_ratio * differential_delay);
 reg signed [in_width+GAIN_BITS-1:0] d_tmp;
 reg signed [in_width+GAIN_BITS-1:0] integrator [0:order-1];
-
 reg [COUNTW-1 : 0] counter;
 	always@(posedge clk or negedge rst_n) begin
 		if(!rst_n) counter <= {COUNTW{1'b1}};
@@ -53,7 +48,12 @@ reg [COUNTW-1 : 0] counter;
     end
 end
 assign valid_out = (counter == {COUNTW{1'b0}});
-wire signed [in_width+GAIN_BITS-1:0] comb [0:order-1];
+
+// CHANGED: wire → reg so the combinational always @(*) block below can drive
+//          this array without Verilator flagging a circular dependency (UNOPTFLAT).
+//          Semantics are identical; it remains purely combinational.
+reg signed [in_width+GAIN_BITS-1:0] comb [0:order-1];
+
 reg signed [in_width+GAIN_BITS-1:0] d_comb [0:order-1][0:differential_delay-1];
 integer i;
 // Integrator + decimation control
@@ -100,13 +100,18 @@ integer j1;
 	        end
 	    end
 end
-genvar r;
-assign comb[0] = d_tmp - d_comb[0][differential_delay-1];
-generate
-	for (r=1; r<order; r=r+1) begin: hello
-		assign comb[r] = comb[r-1] - d_comb[r][differential_delay-1];
-	end
-endgenerate
+
+// CHANGED: Replaced the standalone "assign comb[0] = ..." and the generate/for
+//          block with a single always @(*) combinational block.
+//          Verilator can trace dataflow linearly through an integer loop index,
+//          so it no longer sees the array as self-referential. Logic is unchanged.
+integer i2;
+always @(*) begin
+    comb[0] = d_tmp - d_comb[0][differential_delay-1];
+    for (i2 = 1; i2 < order; i2 = i2 + 1)
+        comb[i2] = comb[i2-1] - d_comb[i2][differential_delay-1];
+end
+
 assign d_out =
     ( comb[order-1] + (1 << (in_width+GAIN_BITS-out_width-1)) )
     >>> (in_width+GAIN_BITS-out_width);

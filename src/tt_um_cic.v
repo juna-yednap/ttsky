@@ -52,7 +52,7 @@ reg [COUNTW-1 : 0] counter;
         counter<=counter+1;
     end
 end
-assign valid_out = ((counter == 1'b0));
+assign valid_out = (counter == {COUNTW{1'b0});
 wire signed [in_width+GAIN_BITS-1:0] comb [0:order-1];
 reg signed [in_width+GAIN_BITS-1:0] d_comb [0:order-1][0:differential_delay-1];
 integer i;

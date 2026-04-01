@@ -55,7 +55,6 @@ end
 assign valid_out = ((counter == 1'b0));
 wire signed [in_width+GAIN_BITS-1:0] comb [0:order-1];
 reg signed [in_width+GAIN_BITS-1:0] d_comb [0:order-1][0:differential_delay-1];
-reg d_clk_tmp;
 integer i;
 // Integrator + decimation control
 	always @(posedge clk or negedge rst_n) begin
